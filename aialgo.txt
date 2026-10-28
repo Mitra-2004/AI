@@ -1,0 +1,186 @@
+# TE SPPU AI 2024 Pattern — Practical Algorithms
+
+## Practical 1: Simple Reflex Agent for Vacuum Cleaner World
+
+1. Start.
+2. Initialize rooms A and B as dirty.
+3. Set the agent's initial location to room A.
+4. Check the condition of the current room.
+5. If the room is dirty, perform the SUCK action and mark it clean.
+6. Otherwise, move to the other room.
+7. Check whether both rooms are clean.
+8. If both are clean, display “Goal Achieved” and stop.
+9. Otherwise, repeat Steps 4–8.
+
+## Practical 2: Model-Based Intelligent Agent for Grid Navigation with Obstacles
+
+1. Start.
+2. Initialize the grid, start position, goal position and obstacles.
+3. Initialize the agent's internal map and visited set.
+4. Insert the start position into the BFS queue.
+5. Remove the first position from the queue.
+6. Update the internal map using the agent's percepts.
+7. If the current position is the goal, return the path.
+8. Otherwise, examine the four neighboring cells.
+9. Ignore blocked, visited and out-of-grid cells.
+10. Add valid neighboring cells and their paths to the queue.
+11. Repeat Steps 5–10 until the goal is found or the queue becomes empty.
+12. Display the path and movement actions.
+
+## Practical 3: Implement A\* Search for the 8-Puzzle Problem
+
+1. Start.
+2. Define the initial state and goal state.
+3. Initialize the priority queue with the initial state.
+4. Calculate the heuristic using Manhattan distance.
+5. Remove the state with the lowest \\(f(n)=g(n)+h(n)\\) value.
+6. If the state matches the goal, reconstruct the solution path and stop.
+7. Generate valid neighboring states by moving the empty tile.
+8. Calculate the cost of reaching each neighboring state.
+9. Update the cost and parent if a cheaper path is found.
+10. Calculate the new evaluation value and insert the state into the priority queue.
+11. Repeat Steps 5–10 until the goal is found or the queue becomes empty.
+12. Display the solution path and total moves.
+
+## Practical 4: Implement Tower of Hanoi Using State-Space Search
+
+1. Start.
+2. Initialize the number of disks, source peg, auxiliary peg and destination peg.
+3. Represent the initial and goal arrangements as states.
+4. Insert the initial state into the BFS queue.
+5. Remove the first state from the queue.
+6. If the state matches the goal, display the solution and stop.
+7. Generate all possible legal disk movements.
+8. Reject moves that place a larger disk on a smaller disk.
+9. Create new states for valid moves.
+10. Mark new states as visited and add them to the queue.
+11. Repeat Steps 5–10 until the goal is found.
+12. Display the sequence of moves and total moves.
+
+## Practical 5.1: Use BFS to Solve a Planning Problem
+
+1. Start.
+2. Initialize the grid, start position and goal position.
+3. Insert the start position into a FIFO queue.
+4. Mark the start position as visited.
+5. Remove the first position from the queue.
+6. If it is the goal, display the path and stop.
+7. Generate the valid neighboring positions.
+8. Reject blocked, out-of-grid and visited positions.
+9. Mark each valid neighbor as visited and add it to the queue with its path.
+10. Repeat Steps 5–9 until the goal is found or the queue becomes empty.
+11. Display the solution path or “No path found”.
+
+## Practical 5.2: Robot Path Planning Using BFS
+
+1. Start.
+2. Initialize the grid, robot's starting position and target position.
+3. Mark the starting position as visited and insert it into the BFS queue.
+4. Remove the first position from the queue.
+5. Check whether the robot has reached the target.
+6. If the target is reached, reconstruct and display the path.
+7. Otherwise, generate valid neighboring cells.
+8. Exclude obstacles, invalid cells and already visited cells.
+9. Add the remaining cells to the queue with their paths.
+10. Repeat Steps 4–9 until the target is reached or the queue is empty.
+11. Display the robot's path and movement sequence.
+
+## Practical 5.3: Blocks World Using BFS
+
+1. Start.
+2. Define the initial arrangement of blocks and the goal arrangement.
+3. Represent each arrangement as a state.
+4. Insert the initial state into the BFS queue.
+5. Remove the first state from the queue.
+6. If the state matches the goal, display the solution and stop.
+7. Identify the blocks that can legally be moved.
+8. Move one clear block onto another block or onto the table.
+9. Generate the resulting state and check whether it has been visited.
+10. Add each new state to the queue and record its parent or path.
+11. Repeat Steps 5–10 until the goal is reached or the queue becomes empty.
+12. Display the sequence of block movements.
+
+## Practical 6.1: Use DFS for Problem Solving — Water Jug Problem
+
+1. Start.
+2. Initialize the capacities of both jugs and the target quantity.
+3. Define the initial state with both jugs empty.
+4. Push the initial state onto the DFS stack.
+5. Pop the top state from the stack.
+6. If the target quantity is reached, display the solution and stop.
+7. Generate possible states by filling, emptying or transferring water between jugs.
+8. Reject invalid and already visited states.
+9. Push the remaining valid states onto the stack.
+10. Repeat Steps 5–9 until the goal is found or the stack becomes empty.
+11. Display the solution path or “No solution found”.
+
+## Practical 6.2: Missionaries and Cannibals Using DFS
+
+1. Start.
+2. Initialize the number of missionaries, cannibals and boat position.
+3. Define the initial state with everyone on the starting riverbank.
+4. Push the initial state onto the DFS stack.
+5. Pop the top state from the stack.
+6. If all missionaries and cannibals reach the opposite bank safely, display the solution and stop.
+7. Generate possible boat crossings carrying one or two people.
+8. Check that missionaries are never outnumbered by cannibals on either bank when missionaries are present.
+9. Reject invalid and visited states.
+10. Push the valid new states onto the stack.
+11. Repeat Steps 5–10 until the goal is found or the stack becomes empty.
+12. Display the sequence of crossings.
+
+## Practical 6.3: River Crossing Problem Using DFS
+
+1. Start.
+2. Define the initial state, goal state and river-crossing constraints.
+3. Initialize the DFS stack with the starting state.
+4. Pop the top state from the stack.
+5. If the state matches the goal, display the solution and stop.
+6. Generate all possible river crossings.
+7. Check whether each crossing satisfies the problem's safety constraints.
+8. Reject invalid or previously visited states.
+9. Push valid new states onto the stack.
+10. Repeat Steps 4–9 until the goal is found or the stack becomes empty.
+11. Display the solution sequence.
+
+## Practical 6.4: Blocks World Using DFS
+
+1. Start.
+2. Define the initial and goal arrangements of blocks.
+3. Represent each arrangement as a state.
+4. Push the initial state onto the DFS stack.
+5. Pop the top state from the stack.
+6. If it matches the goal, display the solution and stop.
+7. Generate legal moves for clear blocks.
+8. Move one block onto another clear block or onto the table.
+9. Reject states that have already been visited.
+10. Push the valid new states onto the stack and record their paths.
+11. Repeat Steps 5–10 until the goal is found or the stack becomes empty.
+12. Display the sequence of block movements.
+
+## Practical 7: Implement Backtracking Search for the 8-Queens Problem
+
+1. Start.
+2. Initialize an empty \\(8 \times 8\\) chessboard.
+3. Begin with the first column.
+4. Try placing a queen in each row of the current column.
+5. Check whether the position is safe from attacks by previously placed queens.
+6. If the position is safe, place the queen and proceed to the next column.
+7. If all eight queens are placed safely, display the solution and stop.
+8. If no safe position exists in the current column, remove the previously placed queen and try another position.
+9. Repeat Steps 4–8 until a solution is found or all possibilities are exhausted.
+10. Display the solution board.
+
+## Practical 8: Simple Chatbot Using Predefined Rules and Pattern Matching
+
+1. Start.
+2. Define predefined rules and responses for common user inputs.
+3. Display a welcome message.
+4. Accept input from the user.
+5. Convert the input to lowercase and normalize it if required.
+6. Compare the input with predefined keywords or patterns.
+7. Select the corresponding response if a rule matches.
+8. If no rule matches, display a default response.
+9. If the user enters the exit command, terminate the program.
+10. Otherwise, repeat Steps 4–9.
+11. Stop.

@@ -1,0 +1,1985 @@
+TE SPPU AI Practical — Beginner-Friendly Code Explanation
+
+I’ll explain your 13 uploaded AI practical programs line by line, using simple language so you can understand the code, explain the logic to your teacher or external examiner, and answer viva questions.
+
+For each practical, we’ll cover:
+
+Aim / concept: What the program does.
+Line-by-line explanation: What each statement means.
+Working: How the program executes.
+How to explain it to your teacher: A short answer you can speak during your practical exam.
+Important viva questions: Likely questions and simple answers.
+One important tip: don’t memorize every line blindly. Understand the purpose of the variables, conditions, loops, and algorithms. That makes it much easier to explain the program if your teacher asks you to modify it.
+
+Practical 1: Simple Reflex Agent — Vacuum Cleaner World
+
+AI Agent
+
+1. Aim and concept
+
+The aim is to create a simple reflex agent that cleans two rooms, A and B.
+
+A reflex agent makes decisions using only what it senses right now. It follows simple rules:
+
+If the current room is dirty → SUCK.
+If room A is clean → move right to B.
+If room B is clean → move left to A.
+Stop when both rooms are clean.
+2. Line-by-line explanation
+
+rooms = {
+
+    "A": "dirty",
+
+    "B": "dirty"
+
+}
+
+rooms is a dictionary that stores the condition of each room.
+"A" and "B" are room names.
+Both rooms initially contain "dirty".
+location = "A"
+
+The vacuum cleaner starts in room A.
+
+print("Initial room status :", rooms)
+
+Displays the initial condition of both rooms.
+
+while True:
+
+Starts an infinite loop. The agent keeps working until the break statement stops it.
+
+if rooms[location] == "dirty":
+
+Checks whether the room where the vacuum cleaner currently is dirty.
+
+For example, rooms["A"] returns "dirty" initially.
+
+print("location:", location)
+
+print("percept:", location, "is dirty")
+
+print("action : SUCK")
+
+These statements display the current location, what the agent senses (its percept), and the action it selects.
+
+rooms[location] = "clean"
+
+Changes the current room’s status to clean. This simulates cleaning.
+
+else:
+
+Runs when the current room is not dirty.
+
+if location == "A":
+
+Checks whether the agent is in room A.
+
+print("location", location)
+
+print("percept", location, "is clean")
+
+print("action : move to right ")
+
+location = "B"
+
+Displays the percept and action, then updates the agent’s location to B.
+
+else:
+
+This branch runs when the agent is in room B and that room is clean.
+
+print("location", location)
+
+print("percept:", location, "is clean ")
+
+print("action:move to left")
+
+location = "A"
+
+Displays the action and moves the agent back to room A.
+
+print("current room status :", rooms)
+
+Displays the updated condition of both rooms after each iteration.
+
+if rooms["A"] == "clean" and rooms["B"] == "clean":
+
+Checks whether both rooms are clean. The and operator means both conditions must be true.
+
+print("goal achieved")
+
+print("both rooms are clean ")
+
+break
+
+Displays the success message and terminates the loop.
+
+3. How does it work?
+
+A
+
+Dirty
+
+A
+
+Clean
+
+B
+
+Cleaned
+
+The agent cleans A, moves to B, cleans B, then stops when both are clean.
+
+4. Explain it to your teacher
+
+“The program implements a simple reflex agent for the vacuum cleaner world. It uses a dictionary to store the status of two rooms. The agent checks the current room’s condition and performs the appropriate action. If the room is dirty, it cleans it; otherwise, it moves to the other room. The program terminates when both rooms are clean.”
+
+Viva questions
+
+What is an agent? An entity that perceives its environment and performs actions.
+What is a percept? Information received by an agent from its environment.
+Why is it called a reflex agent? It chooses actions using the current percept and predefined rules.
+What is the goal state? Both rooms are clean.
+What does break do? It terminates the loop.
+Practical 2: Model-Based Intelligent Agent for Grid Navigation
+
+Model-Based Agent + BFS
+
+1. Aim and concept
+
+The agent must navigate a grid from start S to goal G, avoiding obstacles represented by #.
+
+A model-based agent maintains an internal representation of the environment. This implementation also uses Breadth-First Search (BFS) to find a path.
+
+2. Line-by-line explanation
+
+Import and grid setup
+
+from collections import deque
+
+Imports deque, a double-ended queue. It is used to efficiently remove elements from the front of the BFS queue.
+
+grid = [
+
+    ['S', '.', '.', '#', '.'],
+
+    ['.', '#', '.', '#', '.'],
+
+    ['.', '#', '.', '.', '.'],
+
+    ['.', '#', '.', '#', '.'],
+
+    ['.', '.', '.', '#', 'G']
+
+]
+
+Creates a 5 × 5 grid.
+
+S means start.
+G means goal.
+. means a free cell.
+# means an obstacle.
+ROWS, COLS = len(grid), len(grid[0])
+
+Calculates the number of rows and columns. Both are 5.
+
+start, goal = (0, 0), (4, 4)
+
+Stores the start and goal coordinates. Python indexing begins at zero, so (0, 0) is the top-left cell.
+
+Creating the agent
+
+class ModelBasedAgent:
+
+Defines a class named ModelBasedAgent. A class groups related data and functions.
+
+def __init__(self, start, goal):
+
+This is the constructor. It initializes the agent when an object is created.
+
+self.position = start
+
+self.start = start
+
+self.goal = goal
+
+Stores the current position, starting position, and goal.
+
+self.internal_map = {}
+
+Creates an empty dictionary to store the agent’s internal knowledge of grid cells.
+
+self.visited = set()
+
+self.path = []
+
+visited stores positions already explored.
+path will store the final route.
+Perception function
+
+def perceive(self, grid):
+
+    r, c = self.position
+
+Reads the agent’s current row and column.
+
+for nr, nc in [(r,c), (r-1,c), (r+1,c),
+
+               (r,c-1), (r,c+1)]:
+
+Examines five positions: the current cell, up, down, left, and right.
+
+if 0 <= nr < ROWS and 0 <= nc < COLS:
+
+Checks whether a position lies within the grid boundaries.
+
+self.internal_map[(nr,nc)] = grid[nr][nc]
+
+Stores the observed cell and its type in the internal map.
+
+Checking whether a move is valid
+
+def is_valid(self, pos):
+
+    r, c = pos
+
+Extracts the coordinates of the candidate position.
+
+return (0 <= r < ROWS and 0 <= c < COLS
+
+        and self.internal_map.get(pos) != '#')
+
+Returns True only if the position is inside the grid and is not a known obstacle. The dictionary’s .get() method retrieves the cell value, or None if the position is unknown.
+
+Choosing an action
+
+def select_action(self, next_pos):
+
+Defines the function that converts a coordinate change into a movement direction.
+
+r, c = self.position
+
+nr, nc = next_pos
+
+Stores the current and next coordinates.
+
+if nr < r: return "UP"
+
+if nr > r: return "DOWN"
+
+if nc < c: return "LEFT"
+
+if nc > c: return "RIGHT"
+
+Compares the coordinates and returns the appropriate direction.
+
+Moving the agent
+
+def move(self, next_pos, grid):
+
+    print("Action:", self.select_action(next_pos))
+
+    self.position = next_pos
+
+    self.perceive(grid)
+
+Prints the movement action, updates the agent’s position, and observes the new surroundings.
+
+Finding a path using BFS
+
+def find_path(self, grid):
+
+    queue = deque([(self.start, [self.start])])
+
+Creates a queue containing the starting position and a path that initially contains only that position.
+
+self.visited = {self.start}
+
+Marks the starting position as visited.
+
+while queue:
+
+Continues while there are positions left to explore.
+
+pos, path = queue.popleft()
+
+Removes the oldest queued entry. This is what makes BFS explore positions level by level.
+
+self.position = pos
+
+self.perceive(grid)
+
+Updates the agent’s position to the explored cell and updates its internal map.
+
+if pos == self.goal:
+
+    return path
+
+If the goal has been reached, returns the complete path.
+
+r, c = pos
+
+for nr, nc in [(r-1,c), (r+1,c),
+
+               (r,c-1), (r,c+1)]:
+
+Generates neighboring cells in four directions.
+
+nxt = (nr, nc)
+
+Stores a candidate neighboring position.
+
+if (self.is_valid(nxt) and nxt not in self.visited):
+
+Accepts the neighbor only if it is valid and has not already been visited.
+
+self.visited.add(nxt)
+
+queue.append((nxt, path + [nxt]))
+
+Marks the neighbor as visited and adds it to the queue with the extended path.
+
+return None
+
+Returns None if no path can be found.
+
+Displaying and running the agent
+
+def display_grid(self, grid):
+
+Defines a function to print the grid.
+
+row.append('A' if (r,c) == self.position else grid[r][c])
+
+Displays A at the agent’s current position; otherwise, displays the original cell symbol. Here, A represents the agent.
+
+self.path = self.find_path(grid)
+
+Computes the route from the start to the goal.
+
+if self.path is None:
+
+    print("No path found!")
+
+    return
+
+Displays a failure message and exits the function if no route exists.
+
+print("Path:", self.path)
+
+self.position = self.start
+
+Prints the route and resets the agent to the start before displaying the movement.
+
+for pos in self.path[1:]:
+
+    self.move(pos, grid)
+
+    self.display_grid(grid)
+
+Moves through the path, skipping the first element because it is the starting position. After each move, the grid is displayed.
+
+print("Goal reached!")
+
+print("Total steps:", len(self.path) - 1)
+
+print("Visited cells:", len(self.visited))
+
+Displays success, the number of moves, and the number of explored positions.
+
+agent = ModelBasedAgent(start, goal)
+
+agent.run(grid)
+
+Creates an agent object and starts the program.
+
+3. Explain it to your teacher
+
+“This practical implements a model-based agent for grid navigation. The agent stores its position, internal map, visited cells, and path. It uses BFS to search the grid, explores neighboring cells, avoids obstacles, and finds a route to the goal. The path is then followed and displayed step by step.”
+
+Viva questions
+
+What is a model-based agent? An agent that maintains an internal representation of its environment.
+What is BFS? Breadth-First Search explores nodes level by level.
+Why use a queue? To process the oldest discovered position first.
+Why use a set for visited? To avoid exploring the same position repeatedly.
+What is the obstacle symbol? #.
+Important technical note: This program uses the full grid directly when perceiving cells, so it is a simulation of a model-based agent rather than a completely blind real-world robot. Also, the BFS search explores from the known start through the full grid; the internal map is updated as positions are explored.
+
+Practical 3: A* Search for the 8-Puzzle Problem
+
+Informed Search
+
+1. Aim and concept
+
+The 8-puzzle consists of eight numbered tiles and one blank space arranged in a 3 × 3 board. The objective is to rearrange the tiles into a target configuration.
+
+A* uses this formula:
+
+f(n)=g(n)+h(n)
+
+: actual number of moves taken so far.
+: estimated number of moves remaining.
+: estimated total cost of the solution through that state.
+2. Line-by-line explanation
+
+Import and initial states
+
+import heapq
+
+Imports Python’s heap-based priority queue functions.
+
+start = (1, 2, 3,
+
+         4, 0, 6,
+
+         7, 5, 8)
+
+Stores the initial board as a tuple. The number 0 represents the blank tile.
+
+goal = (1, 2, 3,
+
+        4, 5, 6,
+
+        7, 8, 0)
+
+Defines the desired final arrangement.
+
+Heuristic function
+
+def heuristic(state):
+
+    distance = 0
+
+Defines a function that estimates how far a board is from the goal.
+
+for i, tile in enumerate(state):
+
+Visits every tile. i is its index and tile is its value.
+
+if tile != 0:
+
+Ignores the blank tile.
+
+j = goal.index(tile)
+
+Finds the tile’s target index in the goal state.
+
+distance += abs(i // 3 - j // 3)
+
+distance += abs(i % 3 - j % 3)
+
+Calculates the tile’s Manhattan distance: vertical distance plus horizontal distance.
+
+// 3 calculates a row number.
+% 3 calculates a column number.
+abs() gives a non-negative difference.
+return distance
+
+Returns the total Manhattan distance for all numbered tiles.
+
+Generating neighboring states
+
+def get_neighbors(state):
+
+    neighbors = []
+
+    zero = state.index(0)
+
+Creates an empty list and locates the blank tile.
+
+row, col = zero // 3, zero % 3
+
+Converts the blank’s index into row and column coordinates.
+
+for dr, dc in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+
+Tries moving the blank right, left, down, and up.
+
+r, c = row + dr, col + dc
+
+Calculates the possible new position.
+
+if 0 <= r < 3 and 0 <= c < 3:
+
+Checks that the new position is within the 3 × 3 board.
+
+pos = r * 3 + c
+
+new_state = list(state)
+
+Converts the position back to an index and copies the state into a list so that it can be modified.
+
+new_state[zero], new_state[pos] = new_state[pos], new_state[zero]
+
+Swaps the blank with the adjacent tile.
+
+neighbors.append(tuple(new_state))
+
+Stores the new board as a tuple.
+
+return neighbors
+
+Returns all valid neighboring boards.
+
+A search*
+
+def astar():
+
+    queue = [(heuristic(start), 0, start)]
+
+Initializes the priority queue with (f, g, state). At the start, , so .
+
+cost = {start: 0}
+
+parent = {start: None}
+
+cost stores the lowest known move cost for each state. parent remembers the state from which each state was reached.
+
+while queue:
+
+    f, g, state = heapq.heappop(queue)
+
+Removes the state with the smallest priority value f.
+
+if g != cost[state]:
+
+    continue
+
+Skips an outdated queue entry if a better path to that state was found later.
+
+if state == goal:
+
+Checks whether the goal has been reached.
+
+path = []
+
+while state is not None:
+
+    path.append(state)
+
+    state = parent[state]
+
+Reconstructs the solution by following parent links backward from the goal.
+
+return path[::-1]
+
+Reverses the reconstructed path so it runs from start to goal.
+
+for next_state in get_neighbors(state):
+
+    new_cost = g + 1
+
+Generates all legal next states. Each move costs one, so the new path cost is g + 1.
+
+if new_cost < cost.get(next_state, float('inf')):
+
+Checks whether this route is cheaper than any previously known route. If the state has no known cost, float('inf') acts as infinity.
+
+cost[next_state] = new_cost
+
+parent[next_state] = state
+
+Records the improved cost and parent.
+
+f = new_cost + heuristic(next_state)
+
+heapq.heappush(queue, (f, new_cost, next_state))
+
+Calculates the new estimated total cost and adds the state to the priority queue.
+
+return None
+
+Returns None if no solution is found.
+
+Printing the result
+
+path = astar()
+
+Runs A* search.
+
+if path:
+
+Checks whether a solution path was returned.
+
+for i in range(0, 9, 3):
+
+    print(start[i:i+3])
+
+Prints the initial state in three rows.
+
+for step, state in enumerate(path):
+
+Prints every state in the solution path, numbering them starting at zero.
+
+for i in range(0, 9, 3):
+
+    print(state[i:i+3])
+
+Displays each state as a 3 × 3 board.
+
+print("Total moves:", len(path) - 1)
+
+Calculates the number of moves. A path with four states has three moves.
+
+else:
+
+    print("No solution found!")
+
+Displays a message if the search fails.
+
+3. Explain it to your teacher
+
+“This practical solves the 8-puzzle problem using A* search. It uses Manhattan distance as the heuristic. The algorithm calculates the total estimated cost using , expands the state with the smallest cost, and records parent states to reconstruct the solution path.”
+
+Viva questions
+
+What is A?* An informed search algorithm that combines actual cost and estimated remaining cost.
+What is a heuristic? An estimate of the cost from the current state to the goal.
+Why Manhattan distance? It measures the horizontal and vertical distance of each tile from its target position.
+Why is zero ignored? The blank space is not a numbered tile whose target distance is counted.
+What does heapq.heappop() do? Removes the smallest-priority element.
+Is A optimal here?* Yes, with unit move costs and the Manhattan-distance heuristic, it finds a shortest solution when a solution exists.
+Practical 4: Tower of Hanoi Using State-Space Search
+
+BFS
+
+1. Aim and concept
+
+The Tower of Hanoi consists of disks of different sizes placed on three pegs. The aim is to move all disks from peg A to peg C.
+
+Rules:
+
+Move only one disk at a time.
+Only the top disk can be moved.
+A larger disk cannot be placed on a smaller disk.
+This program represents each arrangement as a state and uses BFS to find a sequence of legal moves.
+
+2. Line-by-line explanation
+
+from collections import deque
+
+Imports a queue for BFS.
+
+def bfs_hanoi(n):
+
+Defines the function. n is the number of disks.
+
+start = (tuple(range(n, 0, -1)), (), ())
+
+Creates the starting state.
+
+For three disks, the state is:
+
+((3, 2, 1), (), ())
+
+Peg A contains all disks, peg B and peg C are empty. The last element of a peg tuple represents its top disk.
+
+goal = ((), (), tuple(range(n, 0, -1)))
+
+Defines the goal state, where all disks are on peg C.
+
+queue = deque([(start, [])])
+
+visited = {start}
+
+Starts the BFS queue with the initial state and an empty list of moves. Marks the initial state as visited.
+
+while queue:
+
+    state, path = queue.popleft()
+
+Continues searching and removes the oldest state and its associated path.
+
+if state == goal:
+
+    return path
+
+Returns the move sequence when the goal state is found.
+
+for s in range(3):
+
+Tries each peg as a source peg.
+
+if not state[s]:
+
+    continue
+
+Skips an empty source peg because no disk can be removed from it.
+
+disk = state[s][-1]
+
+Selects the top disk from the source peg.
+
+for d in range(3):
+
+    if s == d:
+
+        continue
+
+Tries each peg as a destination, except the source peg itself.
+
+if not state[d] or state[d][-1] > disk:
+
+Allows a move if the destination peg is empty or its top disk is larger than the disk being moved.
+
+pegs = [list(x) for x in state]
+
+Creates editable lists for all three pegs.
+
+pegs[s].pop()
+
+pegs[d].append(disk)
+
+Removes the top disk from the source and places it on the destination.
+
+new_state = tuple(tuple(x) for x in pegs)
+
+Converts the new arrangement back into a tuple so it can be stored in a set and used as a state.
+
+if new_state not in visited:
+
+    visited.add(new_state)
+
+Checks that the new arrangement has not already been explored and marks it visited.
+
+new_path = path + [
+
+    f"Move disk {disk} from {chr(65+s)} to {chr(65+d)}"
+
+]
+
+Adds the current move to the path. chr(65) is A, chr(66) is B, and chr(67) is C.
+
+queue.append((new_state, new_path))
+
+Adds the new state and its move sequence to the queue.
+
+return []
+
+Returns an empty list if the search fails.
+
+result = bfs_hanoi(3)
+
+Runs the algorithm for three disks.
+
+for move in result:
+
+    print(move)
+
+print("Total moves:", len(result))
+
+Prints every move and the total number of moves.
+
+3. Explain it to your teacher
+
+“This program solves Tower of Hanoi by representing every legal disk arrangement as a state. BFS explores possible moves using a queue, checks that no larger disk is placed on a smaller one, and stops when all disks reach peg C.”
+
+Viva questions
+
+What is a state? A particular arrangement of disks on the three pegs.
+Why use BFS? It finds the minimum number of moves when every move has equal cost.
+What is the minimum number of moves for three disks? .
+Why use pop()? To remove the top disk from a peg.
+Why use append()? To place a disk on another peg.
+Practical 5.1: BFS for a Planning Problem — Grid Navigation
+
+Uninformed Search
+
+1. Aim and concept
+
+The objective is to find a route from S (start) to E (end) in a grid while avoiding obstacles marked X.
+
+BFS explores all reachable positions level by level. Because every movement costs one step, BFS finds a shortest path if one exists.
+
+2. Line-by-line explanation
+
+from collections import deque
+
+Imports a queue for BFS.
+
+grid = [
+
+    ['S', '0', '0'],
+
+    ['X', '0', 'X'],
+
+    ['0', '0', 'E']
+
+]
+
+Creates a 3 × 3 grid. 0 indicates a free cell, and X indicates an obstacle.
+
+start = (0, 0)
+
+goal = (2, 2)
+
+Stores the coordinates of the start and goal.
+
+queue = deque([(start, [start])])
+
+Initializes the queue with the start position and the path containing only the start.
+
+visited = {start}
+
+Marks the starting cell as visited.
+
+while queue:
+
+    (r, c), path = queue.popleft()
+
+Takes the next position and its path from the front of the queue.
+
+if (r, c) == goal:
+
+Checks whether the current cell is the goal.
+
+print("Path:", path)
+
+print("Steps:", len(path) - 1)
+
+break
+
+Prints the route and number of moves, then stops searching.
+
+for dr, dc in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+
+Generates moves right, down, left, and up.
+
+nr, nc = r + dr, c + dc
+
+Calculates the neighboring coordinates.
+
+if (0 <= nr < 3 and 0 <= nc < 3
+
+    and grid[nr][nc] != 'X'
+
+    and (nr, nc) not in visited):
+
+Accepts the neighbor only if it is inside the grid, is not an obstacle, and has not been visited.
+
+visited.add((nr, nc))
+
+queue.append(((nr, nc), path + [(nr, nc)]))
+
+Marks the neighbor as visited and queues it with an updated path.
+
+else:
+
+    print("No path found")
+
+This else belongs to the while loop. It runs only if the loop finishes normally without executing break.
+
+3. Explain it to your teacher
+
+“This program uses BFS for grid-based planning. It starts from the source, explores neighboring cells using a FIFO queue, avoids obstacles and previously visited cells, and returns the shortest path to the destination.”
+
+Viva questions
+
+What is planning in AI? Finding a sequence of actions to reach a goal.
+What is a FIFO queue? First In, First Out; the earliest inserted item is removed first.
+What is the purpose of visited? To prevent repeated exploration.
+What does len(path) - 1 represent? The number of movements between the path’s positions.
+Practical 5.2: Robot Path Planning — 8-Puzzle Using BFS
+
+BFS on State Space
+
+Important: Although your practical is named Robot path planning, the uploaded code actually solves the 8-puzzle. It does not move a robot through a grid with obstacles.
+
+1. Aim and concept
+
+Find the shortest sequence of legal moves that transforms the initial 8-puzzle arrangement into the goal arrangement.
+
+2. Line-by-line explanation
+
+from collections import deque
+
+Imports the queue used by BFS.
+
+start = (1, 2, 3,
+
+         4, 0, 6,
+
+         7, 5, 8)
+
+Stores the initial board. Zero represents the blank.
+
+goal = (1, 2, 3,
+
+        4, 5, 6,
+
+        7, 8, 0)
+
+Stores the required final board.
+
+queue = deque([(start, [start])])
+
+visited = {start}
+
+Starts BFS with the initial board and marks it visited.
+
+while queue:
+
+    state, path = queue.popleft()
+
+Removes the oldest board state and its path.
+
+if state == goal:
+
+Checks whether the current arrangement matches the goal.
+
+print("Solution found:")
+
+for s in path:
+
+Prints every board in the solution.
+
+print(s[:3])
+
+print(s[3:6])
+
+print(s[6:])
+
+Displays the nine elements as three rows of three.
+
+print("Total moves:", len(path) - 1)
+
+break
+
+Prints the number of moves and ends the search.
+
+zero = state.index(0)
+
+r, c = zero // 3, zero % 3
+
+Finds the blank tile’s position and converts it into row and column coordinates.
+
+for dr, dc in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+
+Tries moving the blank right, down, left, and up.
+
+nr, nc = r + dr, c + dc
+
+Calculates the candidate new position.
+
+if 0 <= nr < 3 and 0 <= nc < 3:
+
+Checks that the blank stays inside the board.
+
+pos = nr * 3 + nc
+
+new_state = list(state)
+
+Converts the neighboring cell to a linear index and creates a modifiable copy.
+
+new_state[zero], new_state[pos] = new_state[pos], new_state[zero]
+
+Swaps the blank with its neighbor.
+
+new_state = tuple(new_state)
+
+Converts the board to a tuple.
+
+if new_state not in visited:
+
+Checks whether this board has already been explored.
+
+visited.add(new_state)
+
+queue.append((new_state, path + [new_state]))
+
+Marks it visited and adds it to the queue with the updated path.
+
+else:
+
+    print("No solution found")
+
+Prints a failure message if BFS empties the queue without finding the goal.
+
+3. Explain it to your teacher
+
+“This program uses BFS to solve the 8-puzzle. It treats each board arrangement as a state and each legal blank-tile movement as an action. It explores states using a FIFO queue, avoids revisiting states, and prints the shortest solution path.”
+
+Viva questions
+
+What is the state space? All possible board arrangements.
+What is the initial state? The starting board.
+What is the goal state? The required final board.
+Why is BFS suitable? All legal moves have equal cost, so BFS finds a shortest solution.
+What is the difference between BFS and A?* BFS uses no heuristic; A* prioritizes states using actual cost plus estimated remaining cost.
+Practical 5.3: Blocks World Using BFS
+
+State-Space Search
+
+1. Aim and concept
+
+The code starts with the tuple ("A", "B", "C") and tries to reach ("C", "B", "A") by swapping adjacent elements.
+
+Note: This is a simplified permutation puzzle, not a full traditional Blocks World implementation with stacks and legal pick-up/put-down operations.
+
+2. Line-by-line explanation
+
+from collections import deque
+
+Imports the BFS queue.
+
+start = ("A", "B", "C")
+
+goal = ("C", "B", "A")
+
+Defines the initial and target arrangements.
+
+queue = deque([(start, [start])])
+
+visited = {start}
+
+Initializes the queue with the initial state and marks it visited.
+
+while queue:
+
+    state, path = queue.popleft()
+
+Removes the oldest state and its path.
+
+if state == goal:
+
+Checks whether the target arrangement has been reached.
+
+print("Solution found:")
+
+for step in path:
+
+    print(step)
+
+Displays all states in the solution.
+
+print("Total moves:", len(path) - 1)
+
+break
+
+Prints the number of transitions and stops the search.
+
+for i in range(3):
+
+Chooses each position as the first position of a possible adjacent swap.
+
+new_state = list(state)
+
+Creates a modifiable copy of the current state.
+
+new_state[i], new_state[(i + 1) % 3] = (
+
+    new_state[(i + 1) % 3], new_state[i]
+
+)
+
+Swaps the element at position i with the next position. % 3 makes the index wrap around, so position 2 swaps with position 0.
+
+new_state = tuple(new_state)
+
+Converts the result back to a tuple.
+
+if new_state not in visited:
+
+    visited.add(new_state)
+
+    queue.append((new_state, path + [new_state]))
+
+Adds an unseen arrangement to the visited set and queue.
+
+else:
+
+    print("No solution found")
+
+Prints a message if no goal arrangement can be reached.
+
+3. Explain it to your teacher
+
+“This program demonstrates BFS over a set of arrangements. It begins from the initial tuple, generates new states by swapping adjacent elements, prevents repeated states, and searches until it finds the target arrangement.”
+
+Viva questions
+
+What is a state? A particular arrangement of the elements.
+Why use a tuple? It is immutable and can be stored in a set.
+What does % 3 do? It calculates the remainder and wraps the index around.
+What is the limitation? It uses adjacent swaps rather than the full rules of the traditional Blocks World.
+Practical 6.1: DFS for the Water Jug Problem
+
+Depth-First Search
+
+1. Aim and concept
+
+The program uses two water jugs with capacities of 4 litres and 3 litres. The aim is to measure exactly 2 litres in the first jug.
+
+DFS explores one possible sequence of actions deeply before exploring alternatives.
+
+A state is represented as (a, b), where:
+
+a = water in Jug 1.
+b = water in Jug 2.
+2. Line-by-line explanation
+
+def dfs(capacity1, capacity2, target):
+
+Defines DFS with two jug capacities and the target quantity.
+
+stack = [((0, 0), [])]
+
+Initializes a stack containing the starting state (0, 0) and an empty path.
+
+visited = set()
+
+Creates a set of states that have already been explored.
+
+while stack:
+
+    (a, b), path = stack.pop()
+
+Removes the last element of the stack. This LIFO behaviour is what makes it DFS.
+
+if (a, b) in visited:
+
+    continue
+
+Skips a state that has already been processed.
+
+visited.add((a, b))
+
+path = path + [(a, b)]
+
+Marks the state as visited and adds it to the current path.
+
+if a == target:
+
+Checks whether Jug 1 contains the required amount.
+
+print("Solution found:")
+
+for state in path:
+
+    print(state)
+
+return
+
+Prints the solution states and exits the function.
+
+Generating possible actions
+
+next_states = [
+
+    (capacity1, b),
+
+    (a, capacity2),
+
+    (0, b),
+
+    (a, 0),
+
+These four states represent filling Jug 1, filling Jug 2, emptying Jug 1, and emptying Jug 2.
+
+(max(0, a - (capacity2 - b)),
+
+ min(capacity2, a + b)),
+
+Represents pouring Jug 1 into Jug 2.
+
+capacity2 - b is the empty space in Jug 2.
+The first expression calculates the remaining water in Jug 1.
+The second calculates the new amount in Jug 2.
+(min(capacity1, a + b),
+
+ max(0, b - (capacity1 - a)))
+
+Represents pouring Jug 2 into Jug 1, limited by Jug 1’s capacity.
+
+for state in next_states:
+
+    if state not in visited:
+
+        stack.append((state, path))
+
+Adds unexplored successor states to the stack. The current path is passed along; when a state is popped, that state is added to its path.
+
+print("No solution found")
+
+Displays failure if the stack becomes empty without reaching the target.
+
+dfs(4, 3, 2)
+
+Runs the algorithm with capacities 4 and 3 and target 2.
+
+3. Explain it to your teacher
+
+“This program solves the water jug problem using DFS. A state stores the amount of water in each jug. The algorithm generates states through filling, emptying, and pouring actions, and uses a stack to explore states until the first jug contains the target quantity.”
+
+Viva questions
+
+What is DFS? Depth-First Search explores one branch deeply before backtracking.
+What is LIFO? Last In, First Out.
+What are the initial quantities? Both jugs start empty: (0, 0).
+What is the goal test? a == target.
+Will DFS always find the shortest solution? No. DFS is not guaranteed to find a shortest path.
+Practical 6.2: Missionaries and Cannibals Using DFS
+
+Constraint-Based Search
+
+1. Aim and concept
+
+Three missionaries and three cannibals must cross a river using a boat that can carry one or two people. Cannibals must never outnumber missionaries on either bank where missionaries are present.
+
+The state is (m, c, boat):
+
+m = missionaries remaining on the left bank.
+c = cannibals remaining on the left bank.
+boat = 1 means the boat is on the left.
+boat = 0 means the boat is on the right.
+2. Line-by-line explanation
+
+def dfs():
+
+Defines the DFS search function.
+
+start = (3, 3, 1)
+
+goal = (0, 0, 0)
+
+Sets the initial state and goal state. At the goal, no missionaries or cannibals remain on the left bank, and the boat is on the right.
+
+stack = [(start, [])]
+
+visited = set()
+
+Initializes the stack and visited set.
+
+while stack:
+
+    state, path = stack.pop()
+
+Pops the next state from the stack.
+
+if state in visited:
+
+    continue
+
+Skips already explored states.
+
+visited.add(state)
+
+path = path + [state]
+
+Marks the state visited and extends the path.
+
+if state == goal:
+
+Checks whether everyone has reached the right bank.
+
+print("Solution found:")
+
+for step in path:
+
+    print(step)
+
+return
+
+Prints the solution sequence and terminates the function.
+
+m, c, boat = state
+
+Extracts the number of missionaries, cannibals, and boat position.
+
+moves = [(1, 0), (2, 0), (0, 1),
+
+         (0, 2), (1, 1)]
+
+Defines all possible passenger combinations: one missionary, two missionaries, one cannibal, two cannibals, or one of each.
+
+for x, y in moves:
+
+Tests each combination, where x is the number of missionaries and y is the number of cannibals.
+
+if boat == 1:
+
+    new_state = (m - x, c - y, 0)
+
+else:
+
+    new_state = (m + x, c + y, 1)
+
+If the boat is on the left, subtracts passengers from the left bank. If it is on the right, adds returning passengers to the left bank.
+
+nm, nc, nb = new_state
+
+Extracts the values of the new state.
+
+if not (0 <= nm <= 3 and 0 <= nc <= 3):
+
+    continue
+
+Rejects states with negative counts or more than three people of either type on the left bank.
+
+left_safe = (nm == 0 or nm >= nc)
+
+The left bank is safe if there are no missionaries there, or if missionaries are at least as numerous as cannibals.
+
+right_m = 3 - nm
+
+right_c = 3 - nc
+
+Calculates the numbers of missionaries and cannibals on the right bank.
+
+right_safe = (right_m == 0 or right_m >= right_c)
+
+Applies the same safety rule to the right bank.
+
+if (left_safe and right_safe
+
+        and new_state not in visited):
+
+    stack.append((new_state, path))
+
+Adds the new state to the stack only if both banks are safe and the state has not already been visited.
+
+print("No solution found")
+
+Displays failure if no solution is found.
+
+dfs()
+
+Executes the DFS algorithm.
+
+3. Explain it to your teacher
+
+“This program solves the Missionaries and Cannibals problem using DFS. It represents each situation using three values, generates possible boat crossings, and rejects states where the number of cannibals exceeds the number of missionaries on a bank where missionaries are present.”
+
+Viva questions
+
+What is a constraint? A condition that a valid solution must satisfy.
+Why calculate right-bank values? The safety condition must hold on both banks.
+Why are there five possible moves? They represent the passenger combinations that carry one or two people.
+What does (3, 3, 1) mean? All six people and the boat start on the left bank.
+Practical 6.3: River Crossing — Farmer, Wolf, Goat and Cabbage
+
+DFS + State Validation
+
+1. Aim and concept
+
+A farmer must transport a wolf, goat, and cabbage across a river. The boat can carry the farmer and at most one of the three items.
+
+The wolf cannot be left alone with the goat, and the goat cannot be left alone with the cabbage.
+
+The state is (f, w, g, c), where each value is 0 for the starting bank and 1 for the opposite bank.
+
+2. Line-by-line explanation
+
+def dfs():
+
+Defines the DFS function.
+
+start = (0, 0, 0, 0)
+
+goal = (1, 1, 1, 1)
+
+Defines the initial and goal states. Initially, everyone is on bank 0; the goal is for everyone to reach bank 1.
+
+stack = [(start, [start])]
+
+visited = set()
+
+Initializes the stack with the initial state and a path containing that state.
+
+while stack:
+
+    state, path = stack.pop()
+
+Removes the most recently added state.
+
+if state in visited:
+
+    continue
+
+visited.add(state)
+
+Skips previously explored states and marks new states as visited.
+
+if state == goal:
+
+Checks whether everyone has crossed safely.
+
+print("Solution found:")
+
+for step in path:
+
+    print(step)
+
+return
+
+Prints the path and exits.
+
+f, w, g, c = state
+
+Extracts the bank locations of the farmer, wolf, goat, and cabbage.
+
+Checking for unsafe states
+
+if (w == g and f != w) or (g == c and f != g):
+
+    continue
+
+Rejects an unsafe situation if:
+
+The wolf and goat are together without the farmer, or
+The goat and cabbage are together without the farmer.
+The or operator means either unsafe condition is enough to reject the state.
+
+Generating moves
+
+moves = [
+
+    (1, 0, 0, 0),
+
+    (1, 1, 0, 0),
+
+    (1, 0, 1, 0),
+
+    (1, 0, 0, 1)
+
+]
+
+Defines four possible moves: farmer alone, farmer with wolf, farmer with goat, or farmer with cabbage.
+
+new_state = tuple(
+
+    state[i] ^ move[i] for i in range(4)
+
+)
+
+Uses the XOR operator (^) to switch the bank value from 0 to 1 or 1 to 0 for each person or item included in the move.
+
+item_index = next(
+
+    (i for i in range(1, 4) if move[i] == 1), None
+
+)
+
+Finds the index of the item accompanying the farmer, if there is one. next(..., None) returns None if the farmer travels alone.
+
+if item_index is not None and state[item_index] != f:
+
+    continue
+
+Rejects a move if the selected item is not on the same bank as the farmer.
+
+if new_state not in visited:
+
+    stack.append((new_state, path + [new_state]))
+
+Adds a new state and its extended path to the stack.
+
+print("No solution found")
+
+dfs()
+
+Prints failure if the search is exhausted, then calls the function to begin the search.
+
+3. Explain it to your teacher
+
+“This program uses DFS to solve the farmer’s river-crossing problem. Each state records which bank each character is on. The algorithm generates legal crossings, checks for unsafe combinations, and searches until everyone reaches the opposite bank.”
+
+Viva questions
+
+What does XOR do here? It toggles a bank value between 0 and 1 when that person or item crosses.
+Why must the item be on the same bank as the farmer? The farmer cannot transport an item from the opposite bank.
+What are the unsafe combinations? Wolf with goat alone, or goat with cabbage alone.
+What is the goal state? (1, 1, 1, 1).
+Practical 6.4: Blocks World Using DFS
+
+Depth-First Search
+
+1. Aim and concept
+
+This program uses DFS to transform ("A", "B", "C") into ("C", "B", "A"). Unlike Practical 5.3, it swaps any two positions rather than only adjacent positions.
+
+It is a simplified state-space problem.
+
+2. Line-by-line explanation
+
+def dfs():
+
+Defines the search function.
+
+start = ("A", "B", "C")
+
+goal = ("C", "B", "A")
+
+Sets the initial and target arrangements.
+
+stack = [(start, [])]
+
+visited = set()
+
+Creates a stack containing the starting state and an empty path. Initializes the visited set.
+
+while stack:
+
+    state, path = stack.pop()
+
+Pops the most recently added state and its path.
+
+if state in visited:
+
+    continue
+
+Skips previously explored states.
+
+visited.add(state)
+
+Marks the current state as explored.
+
+if state == goal:
+
+Checks whether the target arrangement has been reached.
+
+print("Solution found:")
+
+for step in path:
+
+    print(step)
+
+print("Total moves:", len(path) - 1)
+
+return
+
+Prints the path, the number of moves, and exits.
+
+for i in range(3):
+
+    for j in range(i + 1, 3):
+
+Uses two nested loops to generate every pair of distinct positions, without generating the same pair in reverse order.
+
+new_state = list(state)
+
+Copies the current arrangement into a list.
+
+new_state[i], new_state[j] = (
+
+    new_state[j], new_state[i]
+
+)
+
+Swaps the elements at positions i and j.
+
+new_state = tuple(new_state)
+
+Converts the arrangement back to a tuple.
+
+if new_state not in visited:
+
+    stack.append((new_state, path + [new_state]))
+
+Adds unseen arrangements to the stack with the updated path.
+
+print("No solution found")
+
+dfs()
+
+Displays failure if no goal state is found, then runs the algorithm.
+
+3. Explain it to your teacher
+
+“This program uses DFS to solve a permutation problem. It represents each arrangement as a state, generates new states by swapping any pair of positions, and uses a stack and visited set to search for the goal.”
+
+Viva questions
+
+How does DFS differ from BFS? DFS uses a stack and explores deeply; BFS uses a queue and explores level by level.
+Why are nested loops used? To generate all possible pairs of positions to swap.
+What is backtracking? Returning from an unsuccessful path to try another alternative.
+Is this traditional Blocks World? No. It is a simplified swapping problem.
+Practical 7: 8-Queens Problem Using Backtracking
+
+Constraint Satisfaction Problem (CSP)
+
+1. Aim and concept
+
+The objective is to place eight queens on an 8 × 8 chessboard so that no two queens attack each other.
+
+A queen can attack horizontally, vertically, and diagonally. The program uses backtracking to place queens one row at a time. If a placement causes a conflict, it removes that queen and tries another position.
+
+2. Line-by-line explanation
+
+Initialize the board
+
+N = 8
+
+Sets the board size to 8 × 8.
+
+board = [-1] * N
+
+Creates a list of eight elements, all initialized to -1.
+
+Each list index represents a row, and each value represents the column containing the queen in that row.
+
+For example, board[0] = 3 means a queen is placed in row 0, column 3.
+
+The value -1 means no queen has been placed in that row.
+
+Check whether a position is safe
+
+def safe(row, col):
+
+Defines a function that checks whether a queen can be placed at a particular row and column.
+
+for i in range(row):
+
+Checks all previously filled rows. Since the algorithm places one queen per row, there is no need to check unfilled rows.
+
+if board[i] == col or abs(board[i] - col) == abs(i - row):
+
+Checks two possible conflicts:
+
+board[i] == col: Another queen is already in the same column.
+abs(board[i] - col) == abs(i - row): Another queen lies on the same diagonal.
+For a diagonal, the absolute row difference equals the absolute column difference.
+
+return False
+
+If either conflict is found, the position is unsafe.
+
+return True
+
+If no conflict exists with any previously placed queen, the position is safe.
+
+Solve using backtracking
+
+def solve(row):
+
+Defines a recursive function that attempts to place a queen in the given row.
+
+if row == N:
+
+    return True
+
+This is the base case. If row == 8, all eight rows have queens, so a solution has been found.
+
+for col in range(N):
+
+Tries all eight columns, from 0 to 7.
+
+if safe(row, col):
+
+Checks whether the current position is safe.
+
+board[row] = col
+
+Places the queen in that position.
+
+if solve(row + 1):
+
+    return True
+
+Recursively attempts to place a queen in the next row. If all remaining rows can be filled, it returns success.
+
+board[row] = -1
+
+If the recursive attempt fails, removes the queen from the current row. This is the backtracking step.
+
+return False
+
+Returns failure if no column in the current row produces a solution.
+
+Display the solution
+
+if solve(0):
+
+Starts solving from row 0.
+
+for row in range(N):
+
+    for col in range(N):
+
+Uses nested loops to visit every cell on the board.
+
+if board[row] == col:
+
+    print("Q", end=" ")
+
+else:
+
+    print("-", end=" ")
+
+Prints Q if a queen occupies the cell; otherwise, prints -.
+
+The end=" " argument keeps the output on the same line with spaces between cells.
+
+print()
+
+Moves to the next output line after displaying a row.
+
+else:
+
+    print("No solution exists")
+
+Displays a failure message if no solution is found.
+
+3. Understand the backtracking process
+
+Step 1 — Choose
+
+Place a queen in a safe column in the current row.
+
+Step 2 — Recurse
+
+Move to the next row and try placing another queen.
+
+Step 3 — Check
+
+If a later row has no safe position, return to the previous row.
+
+Step 4 — Backtrack
+
+Remove the previous queen and try another column until a solution is found.
+
+4. Explain it to your teacher
+
+“This program solves the 8-Queens problem using backtracking. It places one queen in each row and checks for column and diagonal conflicts. If a placement leads to a dead end, it removes that queen and tries another column. Once all eight queens are placed safely, it prints the board.”
+
+Viva questions
+
+What is backtracking? A technique that abandons an unsuccessful choice and tries an alternative.
+What is a CSP? A Constraint Satisfaction Problem consists of variables, possible values, and constraints.
+Why check diagonals? Queens can attack other queens diagonally.
+Why is recursion used? Each recursive call attempts to place a queen in the next row.
+What is the base case? row == N, meaning all queens have been placed.
+Why use -1? It indicates that no queen is currently assigned to that row.
+Practical 8: Simple Chatbot Using Predefined Rules and Pattern Matching
+
+Rule-Based AI
+
+1. Aim and concept
+
+The objective is to build a basic chatbot that responds to user messages using predefined rules.
+
+This chatbot does not learn from data or use a large language model. It checks whether the user’s message contains certain words or phrases and returns a corresponding response.
+
+For example:
+
+Input: Hello
+Output: Hello! How can I help you?
+2. Line-by-line explanation
+
+Define the chatbot
+
+def chatbot(user_input):
+
+Defines a function called chatbot. It accepts the user’s message as input.
+
+user_input = user_input.lower()
+
+Converts the entire message to lowercase.
+
+For example, "HELLO" becomes "hello". This makes the matching case-insensitive.
+
+Greeting rules
+
+if "hello" in user_input or "hi" in user_input:
+
+    return "Hello! How can I help you?"
+
+Checks whether the message contains "hello" or "hi".
+
+in checks whether a substring appears in a string.
+or means either condition can be true.
+return sends the response back to the caller and ends the function.
+How-are-you rule
+
+elif "how are you" in user_input:
+
+    return "I am fine. Thank you!"
+
+If the first condition is false, checks whether the user asks how the chatbot is doing.
+
+elif means “else if.”
+
+Name rule
+
+elif "your name" in user_input:
+
+    return "My name is SimpleBot."
+
+Returns the chatbot’s name if the phrase "your name" is present.
+
+College rule
+
+elif "college" in user_input:
+
+    return "I can provide basic information about the college."
+
+Returns a predefined response when the message contains "college".
+
+Thank-you rule
+
+elif "thank you" in user_input or "thanks" in user_input:
+
+    return "You are welcome!"
+
+Recognizes two expressions of gratitude and returns a polite response.
+
+Goodbye rule
+
+elif "bye" in user_input or "exit" in user_input:
+
+    return "Goodbye! Have a nice day."
+
+Returns a goodbye response if the message contains "bye" or "exit".
+
+else:
+
+    return "Sorry, I don't understand your question."
+
+Provides a default response if none of the rules match.
+
+Start the conversation
+
+print("Simple Chatbot")
+
+print("Type 'bye' or 'exit' to stop.")
+
+Displays the chatbot’s title and instructions.
+
+while True:
+
+Starts a loop so the user can interact repeatedly.
+
+user_input = input("You: ")
+
+Displays the prompt You: and waits for the user to enter a message.
+
+response = chatbot(user_input)
+
+Calls the chatbot function and stores the returned response.
+
+print("Bot:", response)
+
+Displays the chatbot’s response.
+
+if "bye" in user_input.lower() or "exit" in user_input.lower():
+
+    break
+
+Checks whether the user’s message contains "bye" or "exit". If so, it terminates the conversation loop.
+
+Notice that this stopping condition is separate from the chatbot function’s rules.
+
+3. Example output
+
+You
+
+Hello
+
+Bot
+
+Hello! How can I help you?
+
+You
+
+What is your name?
+
+Bot
+
+My name is SimpleBot.
+
+You
+
+bye
+
+Bot
+
+Goodbye! Have a nice day.
+
+4. Explain it to your teacher
+
+“This program implements a simple rule-based chatbot using pattern matching. It converts the input to lowercase, checks predefined conditions using if, elif, and else, and returns the matching response. A loop allows repeated conversations, and the program stops when the user enters a message containing ‘bye’ or ‘exit’.”
+
+Viva questions
+
+What is a rule-based chatbot? A chatbot that responds according to predefined rules.
+What is pattern matching? Checking input text for specified words or phrases.
+Why use lower()? To make matching case-insensitive.
+What is the difference between print() and return? print() displays a value; return sends a value back from a function.
+Does this chatbot learn? No. Its responses are predefined.
+What is a limitation? It can misunderstand messages that don’t match its predefined patterns.
+Quick revision: All 13 practicals
+
+Use this table for a last-minute review before your TE SPPU AI practical exam.
+
+Practical
+Main concept
+Key Python structure
+1. Vacuum Cleaner
+Simple reflex agent
+if, while, dictionary
+2. Grid Navigation
+Model-based agent + BFS
+Class, dictionary, queue
+3. 8-Puzzle
+A* informed search
+heapq, heuristic, parent map
+4. Tower of Hanoi
+BFS state-space search
+Queue, tuples, legal moves
+5.1 Grid Planning
+BFS
+Queue, visited set
+5.2 8-Puzzle
+BFS
+State transitions, queue
+5.3 Blocks World
+BFS over permutations
+Queue, tuple swaps
+6.1 Water Jug
+DFS
+Stack, states, jug operations
+6.2 Missionaries and Cannibals
+DFS + constraints
+Stack, safety checks
+6.3 River Crossing
+DFS + constraints
+XOR, state validation
+6.4 Blocks World
+DFS over permutations
+Stack, nested loops
+7. 8-Queens
+Backtracking + CSP
+Recursion, safety checks
+8. Chatbot
+Rule-based AI
+Strings, conditions, functions
+Five differences you should know for viva
+
+Concept
+Simple explanation
+BFS vs DFS
+BFS explores level by level using a queue; DFS explores deeply using a stack.
+BFS vs A*
+BFS uses no heuristic; A* uses .
+Reflex vs model-based agent
+A reflex agent uses current percepts and rules; a model-based agent maintains internal state.
+Search vs backtracking
+Search explores possible states; backtracking abandons a choice when it cannot lead to a solution.
+Rule-based vs learning AI
+Rule-based AI follows predefined rules; learning AI uses data or experience to improve its behaviour.
+How to answer when the examiner asks you to explain any code
+
+Follow this order when speaking:
+
+Aim: What problem are you solving?
+Representation: How are states, positions, or inputs stored?
+Algorithm: Which algorithm are you using and why?
+Execution: How does the loop, recursion, or search progress?
+Goal test: How does the program know it has succeeded?
+Output: What result should the program display?
+For example, for DFS: “I represent each situation as a state, push states into a stack, pop one state at a time, check whether it is the goal, and generate valid next states. I use a visited set to avoid repeated exploration.”
+
+One final exam tip: Understand the difference between the practical’s title and its actual implementation. In your uploaded set, Practical 5.2 is an 8-puzzle solver rather than conventional robot-grid path planning, and Practicals 5.3 and 6.4 implement simplified swapping puzzles rather than full Blocks World planning. Being able to identify this accurately is useful if your examiner asks about the code.
